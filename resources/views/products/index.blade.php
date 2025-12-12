@@ -44,7 +44,6 @@
                             <th>Stock</th>
                             <th>Min Stock</th>
                             <th>Status</th>
-                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -68,19 +67,7 @@
                                     <span class="badge badge-success">IN STOCK</span>
                                 @endif
                             </td>
-                            <td>
-                                <div class="action-buttons">
-                                    <a href="{{ route('products.show', $product) }}" class="btn btn-info btn-xs">View</a>
-                                    @if(auth()->user()->role === 'admin')
-                                    <a href="{{ route('products.edit', $product) }}" class="btn btn-warning btn-xs">Edit</a>
-                                    <form action="{{ route('products.destroy', $product) }}" method="POST" style="display:inline;">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-xs" onclick="return confirm('Delete this product?')">Delete</button>
-                                    </form>
-                                    @endif
-                                </div>
-                            </td>
+                            
                         </tr>
                         @endforeach
                     </tbody>

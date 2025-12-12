@@ -13,13 +13,6 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $user = auth()->user();
-        
-        // Redirect admin users to admin dashboard
-        if ($user && $user->role === 'admin') {
-            return $this->adminDashboard();
-        }
-
         return $this->staffDashboard();
     }
 
@@ -99,12 +92,25 @@ class DashboardController extends Controller
         $totalSold = Sale::sum('quantity_sold');
         $totalRevenue = Sale::sum('revenue');
         
-        // Last 30 days sales chart data
+        // Last 30 days sales chart data (revenue)
         $last30Days = Sale::selectRaw('DATE(sold_at) as date, SUM(revenue) as revenue')
             ->where('sold_at', '>=', now()->subDays(30))
             ->groupBy('date')
             ->orderBy('date')
             ->get();
+
+        // Last 30 days items sold data
+        $dailyItemsSold = Sale::selectRaw('DATE(sold_at) as date, SUM(quantity_sold) as quantity')
+            ->where('sold_at', '>=', now()->subDays(30))
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get();
+
+        // Inventory status data for chart
+        $totalProductCount = Product::count();
+        $lowStockCount = Product::whereRaw('stock <= min_stock AND stock > 0')->count();
+        $outOfStockCount = Product::where('stock', 0)->count();
+        $inStockCount = $totalProductCount - $lowStockCount - $outOfStockCount;
 
         // Low stock products
         $lowStockProducts = Product::whereRaw('stock <= min_stock')
@@ -152,6 +158,12 @@ class DashboardController extends Controller
             'lowStockProducts' => $lowStockProducts,
             'recentSales' => $recentSales,
             'chartData' => $last30Days,
+            'dailyItemsSold' => $dailyItemsSold,
+            'inventoryStatus' => [
+                'inStock' => $inStockCount,
+                'lowStock' => $lowStockCount,
+                'outOfStock' => $outOfStockCount
+            ],
             'userRole' => auth()->user()?->role
         ]);
     }

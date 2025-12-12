@@ -4,84 +4,10 @@
 
 @section('content')
 <div class="daily-report-container">
-    <!-- Page Header -->
-    <div class="report-header">
-        <div class="header-content">
-            <h1>📅 Daily Sales Report</h1>
-            <p>Comprehensive sales analytics and reporting</p>
-        </div>
-        <div class="header-actions">
-            <button onclick="window.print()" class="btn btn-print">🖨️ Print Report</button>
-            <a href="{{ route('sales.create') }}" class="btn btn-primary">+ New Sale</a>
-        </div>
-    </div>
-
-    <!-- Date Filter -->
-    <div class="date-filter-section">
-        <form method="GET" action="{{ route('daily_sales_report') }}" class="date-filter-form">
-            <div class="filter-group">
-                <label for="date_from">From Date:</label>
-                <input type="date" name="date_from" id="date_from" value="{{ request('date_from', now()->subDays(30)->format('Y-m-d')) }}" class="form-control">
-            </div>
-            <div class="filter-group">
-                <label for="date_to">To Date:</label>
-                <input type="date" name="date_to" id="date_to" value="{{ request('date_to', now()->format('Y-m-d')) }}" class="form-control">
-            </div>
-            <button type="submit" class="btn btn-filter">🔍 Filter</button>
-            <a href="{{ route('daily_sales_report') }}" class="btn btn-reset">↻ Reset</a>
-        </form>
-    </div>
-
-    <!-- Summary Cards -->
-    <div class="summary-grid">
-        <div class="summary-card" style="border-left: 4px solid #2ecc71;">
-            <div class="summary-icon">💰</div>
-            <div class="summary-details">
-                <div class="summary-label">Total Revenue</div>
-                <div class="summary-value">₱{{ number_format($totalRevenue ?? 0, 2) }}</div>
-            </div>
-        </div>
-
-        <div class="summary-card" style="border-left: 4px solid #3498db;">
-            <div class="summary-icon">🛒</div>
-            <div class="summary-details">
-                <div class="summary-label">Total Sales</div>
-                <div class="summary-value">{{ $totalSales ?? 0 }}</div>
-            </div>
-        </div>
-
-        <div class="summary-card" style="border-left: 4px solid #f39c12;">
-            <div class="summary-icon">📦</div>
-            <div class="summary-details">
-                <div class="summary-label">Items Sold</div>
-                <div class="summary-value">{{ $totalItemsSold ?? 0 }}</div>
-            </div>
-        </div>
-
-        <div class="summary-card" style="border-left: 4px solid #9b59b6;">
-            <div class="summary-icon">📊</div>
-            <div class="summary-details">
-                <div class="summary-label">Avg Transaction</div>
-                <div class="summary-value">₱{{ number_format($avgTransaction ?? 0, 2) }}</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Sales by Date Chart -->
-    <div class="chart-section">
-        <h2>📈 Sales Trend</h2>
-        <div class="chart-container">
-            <canvas id="salesTrendChart"></canvas>
-        </div>
-    </div>
-
-    <!-- Sales Table -->
+  <!-- Sales Table -->
     <div class="report-table-section">
         <div class="section-header">
-            <h2>📋 Sales Transactions</h2>
-            <div class="export-options">
-                <button onclick="exportToCSV()" class="btn btn-export">📥 Export CSV</button>
-            </div>
+            <h2> Daily Sales Performance overview</h2>
         </div>
 
         <div class="table-wrapper">
@@ -119,15 +45,7 @@
                     </tr>
                     @endforeach
                 </tbody>
-                <tfoot>
-                    <tr class="totals-row">
-                        <td colspan="4"><strong>TOTALS</strong></td>
-                        <td class="text-center"><strong>{{ $sales->sum('quantity_sold') }}</strong></td>
-                        <td colspan="2"></td>
-                        <td class="revenue-cell"><strong>₱{{ number_format($sales->sum('revenue'), 2) }}</strong></td>
-                        <td class="profit-cell"><strong>₱{{ number_format($sales->sum(fn($sale) => ($sale->sale_price - $sale->unit_cost) * $sale->quantity_sold), 2) }}</strong></td>
-                    </tr>
-                </tfoot>
+                
             </table>
 
             <!-- Pagination -->
@@ -146,28 +64,6 @@
             @endif
         </div>
     </div>
-
-    <!-- Top Products Section -->
-    @if(isset($topProducts) && $topProducts->count() > 0)
-    <div class="top-products-section">
-        <h2>🏆 Top Selling Products</h2>
-        <div class="top-products-grid">
-            @foreach($topProducts as $index => $product)
-            <div class="top-product-card">
-                <div class="rank-badge">{{ $index + 1 }}</div>
-                <div class="product-info">
-                    <h3>{{ $product->product_name }}</h3>
-                    <div class="product-stats">
-                        <span class="stat-item">{{ $product->total_quantity }} sold</span>
-                        <span class="stat-item revenue">₱{{ number_format($product->total_revenue, 2) }}</span>
-                    </div>
-                </div>
-            </div>
-            @endforeach
-        </div>
-    </div>
-    @endif
-</div>
 
 <style>
     /* ===== CONTAINER ===== */

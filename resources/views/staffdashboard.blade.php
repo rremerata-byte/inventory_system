@@ -11,23 +11,23 @@
 
     <!-- Stat Boxes -->
     <div class="stats-row">
-        <div class="stat-box" style="border-left: 5px solid #27ae60;">
+        <div class="stat-box stat-box-green">
             <div class="stat-label">Current Inventory Value</div>
             <div class="stat-value">₱{{ number_format((float)($stats[0]['value'] ?? 0), 2) }}</div>
         </div>
-        <div class="stat-box" style="border-left: 5px solid #34495e;">
+        <div class="stat-box stat-box-black">
             <div class="stat-label">No. of Product Types</div>
             <div class="stat-value">{{ (int)($stats[1]['value'] ?? 0) }}</div>
         </div>
-        <div class="stat-box" style="border-left: 5px solid #e67e22;">
+        <div class="stat-box stat-box-orange">
             <div class="stat-label">Average Item Price</div>
             <div class="stat-value">₱{{ number_format((float)($stats[2]['value'] ?? 0), 2) }}</div>
         </div>
-        <div class="stat-box" style="border-left: 5px solid #2980b9;">
+        <div class="stat-box stat-box-blue">
             <div class="stat-label">All Time Items Sold</div>
             <div class="stat-value">{{ (int)($stats[3]['value'] ?? 0) }}</div>
         </div>
-        <div class="stat-box" style="border-left: 5px solid #27ae60;">
+        <div class="stat-box stat-box-green">
             <div class="stat-label">All Time Sales</div>
             <div class="stat-value">₱{{ number_format((float)($stats[4]['value'] ?? 0), 2) }}</div>
         </div>
@@ -42,99 +42,6 @@
         <div class="chart-box">
             <h3>📈 Daily Items Sold</h3>
             <canvas id="salesChart"></canvas>
-        </div>
-    </div>
-
-    <!-- Low Stock Products (Admin Only) -->
-    @auth
-        @if(auth()->user()->role === 'admin')
-        <div class="alert alert-warning" style="margin-top: 30px;">
-            <strong>⚠️ Alert:</strong> The following products are low on stock and need replenishment!
-        </div>
-
-        <div class="card">
-        <div class="card-header">
-            <h3>🚨 Low Stock Products</h3>
-        </div>
-        <div class="card-body">
-            @if($lowStockProducts->count() > 0)
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Product Name</th>
-                        <th>Category</th>
-                        <th>Current Stock</th>
-                        <th>Min Stock</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($lowStockProducts as $product)
-                    <tr>
-                        <td>{{ $product->name }}</td>
-                        <td>
-                            <span class="badge" style="background-color: {{ $product->category->color_code }}; color: white;">
-                                {{ $product->category->name }}
-                            </span>
-                        </td>
-                        <td>{{ $product->stock }}</td>
-                        <td>{{ $product->min_stock }}</td>
-                        <td>
-                            @if($product->stock == 0)
-                                <span class="badge badge-danger">OUT OF STOCK</span>
-                            @else
-                                <span class="badge badge-warning">LOW STOCK</span>
-                            @endif
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
-            @else
-            <p class="text-center text-muted">All products have sufficient stock! ✓</p>
-            @endif
-        </div>
-    </div>
-        @endif
-    @endauth
-
-    <!-- Recent Sales -->
-    <div class="card" style="margin-top: 30px;">
-        <div class="card-header">
-            <h3>💰 Recent Sales</h3>
-            <a href="{{ route('sales.index') }}" class="btn btn-secondary btn-sm">View All</a>
-        </div>
-        <div class="card-body">
-            @if($recentSales->count() > 0)
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Product</th>
-                        <th>Sold By</th>
-                        <th>Quantity</th>
-                        <th>Unit Cost</th>
-                        <th>Sale Price</th>
-                        <th>Revenue</th>
-                        <th>Date</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($recentSales as $sale)
-                    <tr>
-                        <td>{{ $sale->product->name }}</td>
-                        <td>{{ $sale->user->name }}</td>
-                        <td>{{ $sale->quantity_sold }}</td>
-                        <td>₱{{ number_format($sale->unit_cost, 2) }}</td>
-                        <td>₱{{ number_format($sale->sale_price, 2) }}</td>
-                        <td class="font-weight-bold">₱{{ number_format($sale->revenue, 2) }}</td>
-                        <td>{{ $sale->sold_at->format('M d, Y H:i') }}</td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
-            @else
-            <p class="text-center text-muted">No sales recorded yet.</p>
-            @endif
         </div>
     </div>
 </div>
@@ -214,32 +121,62 @@
 .stat-box {
     flex: 1 1 auto;
     min-width: 160px;
-    max-width: 200px;
+    max-width: 220px;
     background: white;
-    border-radius: 12px;
-    padding: 24px 20px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
     text-align: center;
-    transition: transform 0.3s, box-shadow 0.3s;
+    transition: border-color 0.3s;
 }
 
 .stat-box:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+    border-color: #b0b0b0;
+}
+
+.stat-box-green {
+    border-color: #27ae60;
+}
+
+.stat-box-green .stat-value {
+    color: #27ae60;
+}
+
+.stat-box-black {
+    border-color: #000;
+}
+
+.stat-box-black .stat-value {
+    color: #000;
+}
+
+.stat-box-orange {
+    border-color: #ff8c00;
+}
+
+.stat-box-orange .stat-value {
+    color: #ff8c00;
+}
+
+.stat-box-blue {
+    border-color: #0066cc;
+}
+
+.stat-box-blue .stat-value {
+    color: #0066cc;
 }
 
 .stat-label {
-    font-size: 0.9rem;
-    color: #7f8c8d;
-    text-transform: uppercase;
+    font-size: 0.85rem;
+    color: #666;
     margin-bottom: 10px;
     font-weight: 600;
 }
 
 .stat-value {
-    font-size: 1.8rem;
-    font-weight: bold;
-    color: #2c3e50;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #333;
 }
 
 .charts-row {
@@ -461,7 +398,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Inventory Status Chart
-    @if($lowStockProducts->count() > 0 || $recentSales->count() > 0)
+    const inventoryStatus = @json($inventoryStatus);
     const inventoryCtx = document.getElementById('inventoryChart');
     if (inventoryCtx) {
         new Chart(inventoryCtx, {
@@ -469,30 +406,51 @@ document.addEventListener('DOMContentLoaded', function() {
             data: {
                 labels: ['In Stock', 'Low Stock', 'Out of Stock'],
                 datasets: [{
-                    data: [@json($lowStockProducts->count()), 0, @json($lowStockProducts->where('stock', 0)->count())],
-                    backgroundColor: ['#27ae60', '#f1c40f', '#e74c3c'],
+                    label: 'Products',
+                    data: [inventoryStatus.inStock, inventoryStatus.lowStock, inventoryStatus.outOfStock],
+                    backgroundColor: ['#27ae60', '#f39c12', '#e74c3c'],
                     borderRadius: 6,
                 }]
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: true,
                 plugins: {
-                    legend: { display: false }
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.parsed.y + ' products';
+                            }
+                        }
+                    }
                 },
                 scales: {
-                    y: { beginAtZero: true, ticks: { stepSize: 1 } },
-                    x: {}
+                    y: { 
+                        beginAtZero: true, 
+                        ticks: { 
+                            stepSize: 1,
+                            color: '#fff'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    },
+                    x: {
+                        ticks: { color: '#fff' },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    }
                 }
             }
         });
     }
-    @endif
 
-    // Daily Sales Chart
-    @if($chartData->count() > 0)
-    const chartData = @json($chartData);
-    const dates = chartData.map(d => d.date);
-    const revenues = chartData.map(d => d.revenue);
+    // Daily Items Sold Chart
+    const dailyItems = @json($dailyItemsSold);
+    const dates = dailyItems.map(d => d.date);
+    const quantities = dailyItems.map(d => parseInt(d.quantity));
 
     const salesCtx = document.getElementById('salesChart');
     if (salesCtx) {
@@ -501,38 +459,54 @@ document.addEventListener('DOMContentLoaded', function() {
             data: {
                 labels: dates,
                 datasets: [{
-                    label: 'Daily Revenue (₱)',
-                    data: revenues,
+                    label: 'Items Sold',
+                    data: quantities,
                     borderColor: '#00bfff',
                     backgroundColor: 'rgba(0, 191, 255, 0.1)',
-                    borderWidth: 2,
+                    borderWidth: 3,
                     fill: true,
                     tension: 0.4,
                     pointBackgroundColor: '#00bfff',
                     pointBorderColor: '#fff',
                     pointBorderWidth: 2,
-                    pointRadius: 4
+                    pointRadius: 5,
+                    pointHoverRadius: 7
                 }]
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: true,
                 plugins: {
-                    legend: { display: false }
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.parsed.y + ' items sold';
+                            }
+                        }
+                    }
                 },
                 scales: {
                     y: {
                         beginAtZero: true,
                         ticks: {
-                            callback: function(value) {
-                                return '₱' + value.toLocaleString();
-                            }
+                            stepSize: 1,
+                            color: '#fff'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    },
+                    x: {
+                        ticks: { color: '#fff' },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
                         }
                     }
                 }
             }
         });
     }
-    @endif
 });
 </script>
 @endsection
