@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Stock Add - Rainbow Direct Selling</title>
+<style>
+  body {
+    margin: 0;
+    font-family: "Poppins", sans-serif;
+    background: url('rainbow.png') no-repeat center;
+    background-size: cover;
+    background-attachment: fixed;
+  }
+  /* Rainbow Header */
+  header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
+      color: white;
+      padding: 10px 20px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  }
+  header img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      margin-right: 10px;
+  }
+  nav a {
+      text-decoration: none;
+      color: white;
+      padding: 8px 15px;
+      border-radius: 8px;
+      font-weight: 500;
+      transition: background 0.3s;
+  }
+  nav a:hover, nav a.active {
+      background: rgba(255, 255, 255, 0.3);
+  }
+  .container { max-width: 420px; margin: 40px auto; padding: 30px 25px; border-radius: 25px; background: linear-gradient(to bottom, #ff6600, #ffcc33); box-shadow: 0 8px 30px rgb(255 102 0 / 0.5); color: #111; font-weight: 600; user-select: none; position: relative; }
+  label { display: block; margin-top: 20px; margin-bottom: 8px; font-size: 1rem; }
+  input[type="text"], input[type="number"], select {
+    width: 100%; padding: 10px 15px; font-size: 1rem; border-radius: 15px; border: none; box-shadow: 0 0 8px rgb(0 0 0 / 0.1);
+    font-weight: bold; user-select: text; box-sizing: border-box; -webkit-appearance: none; -moz-appearance: none; appearance: none;
+    background: #fff; color: #111; outline-offset: 4px; cursor: pointer; transition: box-shadow 0.3s ease;
+  }
+  input[type="text"]::placeholder, input[type="number"]::placeholder { font-weight: normal; color: #777; }
+  input[type="text"]:focus, input[type="number"]:focus, select:focus { box-shadow: 0 0 12px #ff8c00aa; outline: none; }
+  input[type=number] { -moz-appearance: textfield; }
+  .unit-cost-wrapper { position: relative; }
+  .unit-cost-wrapper::before {
+    content: "₱"; position: absolute; left: 15px; top: 50%; transform: translateY(-50%);
+    font-weight: 700; color: #ff6600; pointer-events: none;
+  }
+  .unit-cost-wrapper input { padding-left: 28px; }
+  button[type="submit"] {
+    margin-top: 25px; background: #ff6600; border: none; padding: 12px 20px; 
+    color: white; font-weight: 700; border-radius: 18px; cursor: pointer;
+    width: 100%; font-size: 1.1rem; transition: background 0.3s ease;
+  }
+  button[type="submit"]:hover { background: #e65a00; }
+</style>
+</head>
+<body>
+
+<header>
+    <div class="logo-title">
+        <img src="rainbow.png" alt="Rainbow Logo" />
+    </div>
+    <nav>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="productlisting.html">Product Listing</a>
+        <a href="stock_add.html" class="active" style="color: white; text-decoration:none; padding: 8px 15px; border-radius: 8px; background: rgba(22, 220, 65, 0.6); filter: drop-shadow(0 0 6px #888); cursor: default;">Stock Add</a>
+        <a href="stock_sold.html">Stock Sold</a>
+        <a href="daily_sales_report.html">Daily Sales Report</a>
+        <a href="settings.html">Settings</a>
+    </nav>
+</header>
+
+<main class="container" role="main" aria-labelledby="formTitle">
+  <h2 id="formTitle">Register Incoming Stock</h2>
+  <form id="stockForm" autocomplete="off" novalidate>
+    <label for="productSelect">Select Existing Product</label>
+    <select id="productSelect" name="productSelect" aria-required="true">
+      <option value="" disabled selected>Select existing product or add new...</option>
+    </select>
+
+    <label for="productName">Or Enter New Product Name</label>
+    <input type="text" id="productName" name="productName" placeholder="New Product Name" />
+
+    <label for="quantity">Quantity to Add</label>
+    <input type="number" id="quantity" name="quantity" min="1" placeholder="Quantity" required aria-required="true" />
+
+    <label for="unitCost">Unit Cost (₱)</label>
+    <div class="unit-cost-wrapper">
+      <input type="number" id="unitCost" name="unitCost" min="0.01" step="0.01" placeholder="" required aria-required="true" />
+    </div>
+
+    <label for="category">Category</label>
+    <select id="category" name="category" required aria-required="true">
+      <!-- Categories loaded dynamically -->
+    </select>
+
+    <button type="submit">Add Stock</button>
+  </form>
+</main>
+
+<script>
+  const STORAGE_PRODUCTS = 'rainbow_products';
+  const STORAGE_CATEGORIES = 'rainbow_categories';
+  const STORAGE_USER_LOGS = 'rainbow_user_logs';
+
+  function loadProducts() {
+    const saved = localStorage.getItem(STORAGE_PRODUCTS);
+    if(saved) {
+      try { return JSON.parse(saved); } catch { return []; }
+    }
+    return [];
+  }
+
+  function saveProducts(products) {
+    localStorage.setItem(STORAGE_PRODUCTS, JSON.stringify(products));
+  }
+
+  function loadCategories() {
+    const saved = localStorage.getItem(STORAGE_CATEGORIES);
+    if(saved) {
+      try { return JSON.parse(saved); } catch { return ["Natasha", "Personal Collection", "Avon", "BHI", "Tupperware", "Sunexchange"]; }
+    }
+    return ["Natasha", "Personal Collection", "Avon", "BHI", "Tupperware", "Sunexchange"];
+  }
+
+  function saveUserLogs(logs) {
+    localStorage.setItem(STORAGE_USER_LOGS, JSON.stringify(logs));
+  }
+
+  function logActivity(action, details, userRole) {
+    const logsJson = localStorage.getItem(STORAGE_USER_LOGS);
+    let logs = [];
+    if (logsJson) {
+      try {
+        logs = JSON.parse(logsJson);
+      } catch {} 
+    }
+    logs.push({
+      timestamp: new Date().toISOString(),
+      action,
+      details,
+      userRole
+    });
+    localStorage.setItem(STORAGE_USER_LOGS, JSON.stringify(logs));
+  }
+
+  function populateCategories() {
+    const categories = loadCategories();
+    const select = document.getElementById('category');
+    select.innerHTML = '';
+    categories.forEach(cat => {
+      const option = document.createElement('option');
+      option.value = cat;
+      option.textContent = cat;
+      select.appendChild(option);
+    });
+  }
+
+  function populateProductSelect() {
+    const products = loadProducts();
+    const select = document.getElementById('productSelect');
+    select.innerHTML = '<option value="" disabled selected>Select existing product or add new...</option>';
+    products.forEach((p, idx) => {
+      const option = document.createElement('option');
+      option.value = idx;
+      option.textContent = p.name;
+      select.appendChild(option);
+    });
+  }
+
+  populateCategories();
+  populateProductSelect();
+
+  const productSelect = document.getElementById('productSelect');
+  const productNameInput = document.getElementById('productName');
+  const unitCostInput = document.getElementById('unitCost');
+  const categorySelect = document.getElementById('category');
+
+  productSelect.addEventListener('change', () => {
+    const idx = productSelect.value;
+    if(idx === '') return;
+    const products = loadProducts();
+    const product = products[idx];
+    productNameInput.value = '';
+    unitCostInput.value = product.price.toFixed(2);
+    categorySelect.value = product.category;
+  });
+
+  productNameInput.addEventListener('input', () => {
+    if(productNameInput.value.trim().length > 0) {
+      productSelect.value = '';
+      unitCostInput.value = '';
+      categorySelect.value = '';
+    }
+  });
+
+  document.getElementById('stockForm').addEventListener('submit', e => {
+    e.preventDefault();
+    let name = productNameInput.value.trim();
+    const selectedIndex = productSelect.value;
+    const quantity = parseInt(document.getElementById('quantity').value, 10);
+    const unitCost = parseFloat(unitCostInput.value);
+    const category = categorySelect.value;
+    const userRole = "Admin"; // this could be dynamic based on logged-in user
+
+    if((!name && selectedIndex === '') || isNaN(quantity) || quantity < 1 || isNaN(unitCost) || unitCost <= 0 || !category) {
+      alert('Please fill in all fields correctly.');
+      return;
+    }
+
+    const products = loadProducts();
+
+    if(selectedIndex !== '') {
+      // Update existing product
+      products[selectedIndex].stock += quantity;
+      products[selectedIndex].price = unitCost;
+      products[selectedIndex].category = category;
+      name = products[selectedIndex].name;
+    } else {
+      // Add new product
+      products.push({
+        name,
+        price: unitCost,
+        stock: quantity,
+        minStock: 0,
+        category
+      });
+    }
+
+    saveProducts(products);
+
+    // Log user activity
+    logActivity(
+      'Stock Add',
+      `Added ${quantity} units of ${name}.`,
+      userRole
+    );
+
+    alert(`Stock Updated:\nProduct: ${name}\nQuantity Added: ${quantity}\nUnit Cost: ₱${unitCost.toFixed(2)}\nCategory: ${category}`);
+
+    e.target.reset();
+    productSelect.value = '';
+    populateProductSelect();
+    populateCategories();
+  });
+</script>
+
+</body>
+</html>

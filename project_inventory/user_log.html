@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>User Activity Log - Rainbow Direct Selling</title>
+<style>
+  body {
+    margin: 0;
+    font-family: "Poppins", sans-serif;
+    background: url('rainbow.png') no-repeat center;
+    background-size: cover;
+    background-attachment: fixed;
+    user-select: none;
+  }
+  /* Rainbow Header */
+  header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
+      color: white;
+      padding: 10px 20px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  }
+  header img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      margin-right: 10px;
+  }
+  nav a {
+      text-decoration: none;
+      color: white;
+      padding: 8px 15px;
+      border-radius: 8px;
+      font-weight: 500;
+      transition: background 0.3s;
+  }
+  nav a:hover, nav a.active {
+      background: rgba(255, 255, 255, 0.3);
+  }
+  .container {
+    max-width: 900px;
+    margin: 40px auto 60px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 25px;
+    padding: 30px 40px 40px;
+    box-shadow:
+      0 0 20px rgba(255,0,0,0.1),
+      0 0 40px rgba(255,127,0,0.1),
+      0 0 60px rgba(255,255,0,0.15),
+      0 0 80px rgba(0,255,0,0.1),
+      0 0 100px rgba(0,0,255,0.1),
+      0 0 120px rgba(75,0,130,0.1),
+      0 0 140px rgba(139,0,255,0.1);
+  }
+  a.back-link {
+    display: inline-block;
+    color: #4caf50;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    margin-bottom: 20px;
+    user-select: none;
+  }
+  a.back-link:hover {
+    text-decoration: underline;
+  }
+  h1 {
+    font-weight: 700;
+    margin-bottom: 25px;
+    user-select: none;
+  }
+  .log-entry {
+    border-radius: 18px;
+    padding: 20px 25px;
+    margin-bottom: 16px;
+    box-shadow: 0 6px 10px rgb(0 0 0 / 0.12);
+    color: black;
+    user-select: none;
+    position: relative;
+  }
+  .log-label {
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 22px;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    color: rgb(186, 59, 169);
+    user-select: none;
+  }
+  .log-stock-sold {
+    background: linear-gradient(90deg, #8bc34a, #4caf50);
+    color: #004d40;
+  }
+  .log-stock-add {
+    background: linear-gradient(90deg, #0b5a7f, #285982);
+  }
+  .log-login-admin {
+    background: linear-gradient(90deg, #dc918f, #d47979);
+    color: #a6f1e4;
+  }
+  .log-login-staff {
+    background: linear-gradient(90deg, #fdd835, #fbc02d);
+    color: #3e2723;
+  }
+  .log-message {
+    font-size: 1rem;
+    margin-bottom: 4px;
+  }
+  .log-user {
+    font-weight: 700;
+    float: right;
+  }
+  .log-time {
+    font-size: 0.85rem;
+    color: #3e16e0;
+    clear: both;
+    user-select: text;
+  }
+</style>
+</head>
+<body>
+
+<header>
+    <div class="logo-title">
+        <img src="rainbow.png" alt="Rainbow Logo" />
+    </div>
+    <nav>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="productlisting.html">Product Listing</a>
+        <a href="stock_add.html">Stock Add</a>
+        <a href="stock_sold.html">Stock Sold</a>
+        <a href="daily_sales_report.html">Daily Sales Report</a>
+        <a href="settings.html" class="active" style="color: white; text-decoration:none; padding: 8px 15px; border-radius: 8px; background: rgba(128,128,255,0.6); filter: drop-shadow(0 0 6px #888); cursor: default;">Settings</a>
+    </nav>
+</header>
+
+<div class="container" role="main" aria-label="User Activity Log">
+  <a href="settings.html" class="back-link" aria-label="Back to Settings Overview">← Back to Settings Overview</a>
+  <h1>User Activity Log</h1>
+
+  <div id="logContainer">
+    <!-- Logs inserted here -->
+  </div>
+</div>
+
+<script>
+  const STORAGE_KEY = 'rainbow_user_logs';
+
+  // Load logs from localStorage
+  function loadUserLogs() {
+    const logsJson = localStorage.getItem(STORAGE_KEY);
+    if(logsJson){
+      try {
+        return JSON.parse(logsJson);
+      } catch {
+        return [];
+      }
+    }
+    return [];
+  }
+
+  // Format ISO date string to display time and date
+  function formatDateTime(isoString) {
+    const d = new Date(isoString);
+    return `${d.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})} on ${d.toLocaleDateString()}`;
+  }
+
+  // Create single log entry HTML
+  function createLogHtml(log) {
+    /* 
+      Expected log structure:
+      { timestamp, action, details, userRole, colorClass }
+    */
+    return `
+      <div class="log-entry ${log.colorClass}">
+        <div class="log-label" aria-label="Action type">${log.action.toUpperCase()}</div>
+        <div class="log-message">${log.details}</div>
+        <div>
+          <span class="log-user">${log.userRole}</span>
+          <span class="log-time">${formatDateTime(log.timestamp)}</span>
+        </div>
+      </div>`;
+  }
+
+  // Render all logs
+  function renderLogs() {
+    const logs = loadUserLogs();
+    const container = document.getElementById('logContainer');
+    if(logs.length === 0){
+      container.innerHTML = '<p style="text-align:center; color:#666;">No user activity logs available.</p>';
+      return;
+    }
+    // Sort newest first
+    logs.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+    container.innerHTML = logs.map(createLogHtml).join('');
+  }
+
+  renderLogs();
+
+  // Optional: You may implement function to log activities from your system by adding entries here like:
+  function logActivity(action, details, userRole, colorClass) {
+    const logs = loadUserLogs();
+    logs.push({
+      timestamp: new Date().toISOString(),
+      action, details, userRole, colorClass
+    });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(logs));
+    renderLogs(); // refresh display
+  }
+
+</script>
+
+</body>
+</html>

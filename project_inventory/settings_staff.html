@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Settings - Rainbow Online Shopping</title>
+<style>
+  body {
+    margin: 0;
+    font-family: "Poppins", sans-serif;
+    background: url('rainbow.png') no-repeat center;
+    background-size: cover;
+    background-attachment: fixed;
+  }
+  /* Rainbow Header */
+  header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
+      color: white;
+      padding: 10px 20px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  }
+  header img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      margin-right: 10px;
+  }
+  nav a {
+      text-decoration: none;
+      color: white;
+      padding: 8px 15px;
+      border-radius: 8px;
+      font-weight: 500;
+      transition: background 0.3s;
+  }
+  nav a:hover, nav a.active {
+      background: rgba(255, 255, 255, 0.3);
+  }
+  
+  main.container {
+    max-width: 900px;
+    margin: 40px auto 60px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 15px;
+    padding: 30px 40px 40px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    user-select: none;
+    box-sizing: border-box;
+  }
+  h1 {
+    margin-top: 0;
+    margin-bottom: 12px;
+    font-weight: 700;
+    font-size: 1.8rem;
+    border-bottom: 1.5px solid #555;
+    padding-bottom: 8px;
+    color: #111;
+  }
+  h2 {
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #222;
+  }
+  .user-info-box {
+    position: relative;
+    background: rgba(220, 254, 192, 0.9);
+    border-radius: 12px;
+    box-shadow: 0 8px 14px rgba(0, 128, 0, 0.15);
+    padding: 16px 25px 16px 25px;
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    box-sizing: border-box;
+  }
+  /* Left align user details and place sign out on the right */
+  .user-details {
+    font-size: 1rem;
+    line-height: 1.4;
+    color: #444;
+    flex-grow: 1;
+    text-align: left;
+  }
+  .user-details p {
+    margin: 8px 0;
+  }
+  .user-details p strong {
+    font-weight: 700;
+  }
+  .user-email {
+    color: #000;
+  }
+  .user-role {
+    color: #c0392b; /* red */
+  }
+  .auth-status {
+    color: #239b3f; /* green */
+  }
+  .sign-out-btn {
+    background: linear-gradient(90deg, #a1e33a, #62c20a);
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 28px;
+    font-size: 1.1rem;
+    box-shadow: 0 5px 10px rgba(97,175,10,0.6);
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+    user-select: none;
+    white-space: nowrap;
+  }
+  .sign-out-btn:hover {
+    background: linear-gradient(90deg, #7ac92a, #4d8a07);
+    box-shadow: 0 6px 14px rgba(58,120,7,0.8);
+  }
+  .logo-bg {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    height: auto;
+    opacity: 0.1;
+    pointer-events: none;
+    user-select: none;
+    border-radius: 12px;
+    z-index: 0;
+  }
+  @media (max-width: 600px) {
+    .user-info-box {
+      flex-direction: column;
+      gap: 16px;
+    }
+    .user-details{
+      width: 100%;
+      text-align: left;
+    }
+    .sign-out-btn {
+      width: 100%;
+      padding: 14px 0;
+      font-size: 1.2rem;
+    }
+  }
+</style>
+</head>
+<body>
+
+<header>
+    <div class="logo-title">
+        <img src="rainbow.png" alt="Rainbow Logo" />
+    </div>
+    <nav>
+        <a href="dashboard_staff.html">Dashboard</a>
+        <a href="productlisting_staff.html">Product Listing</a>
+        <a href="stock_sold_staff.html">Stock Sold</a>
+        <a href="daily_sales_report_staff.html">Daily Sales Report</a>
+        <a href="settings_staff.html" class="active" style="color: white; text-decoration:none; padding: 8px 15px; border-radius: 8px; background: rgba(128,128,255,0.6); filter: drop-shadow(0 0 6px #888); cursor: default;">Settings</a>
+    </nav>
+</header>
+
+<main class="container" role="main" aria-labelledby="pageTitle">
+  <h1 id="pageTitle">Application Setting</h1>
+
+  <h2>User Information</h2>
+
+  <div class="user-info-box" role="region" aria-live="polite">
+    <div class="user-details">
+      <p>Your current User <strong>EMAIL:</strong> <span class="user-email" id="userEmail">1170637634310</span></p>
+      <p>Your Assigned Role: <span class="user-role" id="userRole">Staff</span></p>
+      <p>Authentication Status: <span class="auth-status" id="userAuth">Authenticated</span></p>
+    </div>
+    <button class="sign-out-btn" aria-label="Sign Out" id="signOutBtn" type="button">Sign Out</button>
+    <img src="rainbow.png" alt="" aria-hidden="true" class="logo-bg" />
+  </div>
+</main>
+
+<script>
+  const signOutButton = document.getElementById('signOutBtn');
+  signOutButton.addEventListener('click', () => {
+    if(confirm("Are you sure you want to sign out?")) {
+      alert("You have been signed out.");
+      window.location.href = "login.html";
+    }
+  });
+</script>
+
+</body>
+</html>

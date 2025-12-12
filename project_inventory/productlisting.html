@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Rainbow Direct Selling - Product Catalog</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: "Poppins", sans-serif;
+            background: url('rainbow.png') no-repeat center;
+            background-size: cover;
+            background-attachment: fixed;
+        }
+        /* Rainbow Header */
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
+            color: white;
+            padding: 10px 20px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+        header img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        nav a {
+            text-decoration: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+        nav a:hover, nav a.active {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        /* Main Container */
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            width: 90%;
+            margin: 40px auto;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        h2 {
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        /* Search and Filter */
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .controls input {
+            padding: 8px;
+            border-radius: 20px;
+            border: 1px solid #ccc;
+            width: 250px;
+            outline: none;
+        }
+        .controls select {
+            padding: 8px;
+            border-radius: 20px;
+            border: 1px solid #ccc;
+            background: #eafbea;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        /* Table Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: center;
+        }
+        th {
+            background: #f2f2f2;
+            font-weight: 600;
+        }
+        tr:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+        /* Status Buttons */
+        .status {
+            padding: 5px 10px;
+            border-radius: 10px;
+            color: white;
+            font-weight: 500;
+            user-select: none;
+        }
+        .in-stock {
+            background: #2ecc71;
+        }
+        .low-stock {
+            background: #f1c40f;
+            color: #222;
+        }
+        .out-stock {
+            background: #e74c3c;
+        }
+        /* Action Links */
+        .action a {
+            margin: 0 5px;
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+            user-select: none;
+        }
+        .edit {
+            color: #3498db;
+        }
+        .delete {
+            color: #e74c3c;
+        }
+        /* Responsive */
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+                gap: 10px;
+            }
+            table {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-title">
+            <img src="rainbow.png" alt="Rainbow Logo" />
+        </div>
+        <nav>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="#" class="active" style="color: white; text-decoration:none; padding: 8px 15px; border-radius: 8px; background: rgba(243, 117, 20, 0.6); filter: drop-shadow(0 0 6px #888); cursor: default;">Product Listing</a>
+            <a href="stock_add.html">Stock Add</a>
+            <a href="stock_sold.html">Stock Sold</a>
+            <a href="daily_sales_report.html">Daily Sales Report</a>
+            <a href="settings.html">Settings</a>
+        </nav>
+    </header>
+    <div class="container">
+        <h2>Product Catalog</h2>
+        <div class="controls">
+            <input type="text" id="search" placeholder="🔍 Search Product" />
+            <select id="category" onchange="renderTable()">
+                <!-- Options will be dynamically populated -->
+            </select>
+        </div>
+        <table id="productTable">
+            <thead>
+                <tr>
+                    <th>NAME</th>
+                    <th>PRICE</th>
+                    <th>STOCK</th>
+                    <th>MIN. STOCK</th>
+                    <th>STATUS</th>
+                    <th>ACTION</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Rows will be dynamically generated -->
+            </tbody>
+        </table>
+    </div>
+<script>
+const defaultProducts = [
+];
+
+const defaultCategories = ["Natasha", "Personal Collection", "Avon", "BHI", "Tupperware", "Sunexchange"];
+
+function loadSavedProducts() {
+  const saved = localStorage.getItem('rainbow_products');
+  if (saved) {
+    try { return JSON.parse(saved); }
+    catch { return []; }
+  }
+  return [];
+}
+
+function loadCategories() {
+  const saved = localStorage.getItem('rainbow_categories');
+  if (saved) {
+    try { return JSON.parse(saved); }
+    catch { return defaultCategories; }
+  }
+  return defaultCategories;
+}
+
+let products = [...defaultProducts, ...loadSavedProducts()];
+let categories = loadCategories();
+
+function populateCategoryDropdown() {
+  const categorySelect = document.querySelector("#category");
+  categorySelect.innerHTML = '<option value="All">All</option>';
+  categories.forEach(cat => {
+    categorySelect.innerHTML += `<option value="${cat}">${cat}</option>`;
+  });
+}
+
+function getStatus(stock, minStock) {
+    if (stock >= minStock) return { text: "In Stock", class: "in-stock" };
+    else if (stock >= minStock / 2) return { text: "Low Stock", class: "low-stock" };
+    else return { text: "Out of Stock", class: "out-stock" };
+}
+
+function renderTable() {
+    const searchFilter = document.querySelector("#search").value.toLowerCase();
+    const categoryFilter = document.querySelector("#category").value;
+    const tableBody = document.querySelector("#productTable tbody");
+    tableBody.innerHTML = "";
+
+    products
+        .map((p, originalIndex) => ({ ...p, originalIndex }))
+        .filter(p => p.name.toLowerCase().includes(searchFilter))
+        .filter(p => categoryFilter === "All" || p.category === categoryFilter)
+        .forEach(p => {
+            const status = getStatus(p.stock, p.minStock);
+            const row = `
+                <tr>
+                    <td>${p.name}</td>
+                    <td>₱${p.price}</td>
+                    <td>${p.stock}</td>
+                    <td>${p.minStock}</td>
+                    <td><span class="status ${status.class}">${status.text}</span></td>
+                    <td class="action">
+                        <a href="#" class="edit" onclick="editProduct(${p.originalIndex})">Edit</a>
+                        <a href="#" class="delete" onclick="deleteProduct(${p.originalIndex})">Delete</a>
+                    </td>
+                </tr>
+            `;
+            tableBody.innerHTML += row;
+        });
+}
+
+function editProduct(index) {
+    const product = products[index];
+    const newName = prompt("Enter new name:", product.name);
+    if (newName === null) return;
+
+    const newPrice = prompt("Enter new price:", product.price);
+    if (newPrice === null || isNaN(newPrice) || newPrice <= 0) {
+        alert("Invalid price. Please enter a valid number.");
+        return;
+    }
+
+    const newStock = prompt("Enter new stock:", product.stock);
+    if (newStock === null || isNaN(newStock) || newStock < 0) {
+        alert("Invalid stock. Please enter a valid number.");
+        return;
+    }
+
+    const newMinStock = prompt("Enter new min. stock:", product.minStock);
+    if (newMinStock === null || isNaN(newMinStock) || newMinStock < 0) {
+        alert("Invalid min. stock. Please enter a valid number.");
+        return;
+    }
+
+    const newCategory = prompt("Enter new category:", product.category);
+    if (newCategory === null) return;
+
+    if (!categories.includes(newCategory)) {
+        alert("Invalid category. Please enter a valid category from the list.");
+        return;
+    }
+
+    products[index] = {
+        name: newName,
+        price: parseFloat(newPrice),
+        stock: parseInt(newStock),
+        minStock: parseInt(newMinStock),
+        category: newCategory
+    };
+
+    saveProductsToStorage();
+    renderTable();
+}
+
+function deleteProduct(index) {
+    if (confirm(`Are you sure you want to delete "${products[index].name}"?`)) {
+        products.splice(index, 1);
+        saveProductsToStorage();
+        renderTable();
+    }
+}
+
+function saveProductsToStorage() {
+  // Only save items that are not in defaultProducts (newly added)
+  let savedItems = products.filter(p => !defaultProducts.some(dp => dp.name === p.name && dp.category === p.category && dp.price === p.price));
+  localStorage.setItem('rainbow_products', JSON.stringify(savedItems));
+}
+
+window.addEventListener('storage', e => {
+  if (e.key === 'rainbow_categories') {
+    categories = loadCategories();
+    populateCategoryDropdown();
+    renderTable(); // Re-render in case categories changed
+  }
+});
+
+document.querySelector("#search").addEventListener("input", renderTable);
+
+// Initialize
+populateCategoryDropdown();
+renderTable();
+</script>
+</body>
+</html>

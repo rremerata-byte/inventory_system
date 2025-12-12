@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Daily Sales Report - Rainbow Direct Selling</title>
+<style>
+  body {
+    margin: 0;
+    font-family: "Poppins", sans-serif;
+    background: url('rainbow.png') no-repeat center;
+    background-size: cover;
+    background-attachment: fixed;
+  }
+  /* Rainbow Header */
+  header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
+      color: white;
+      padding: 10px 20px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  }
+  header img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      margin-right: 10px;
+  }
+  nav a {
+      text-decoration: none;
+      color: white;
+      padding: 8px 15px;
+      border-radius: 8px;
+      font-weight: 500;
+      transition: background 0.3s;
+  }
+  nav a:hover, nav a.active {
+      background: rgba(255, 255, 255, 0.3);
+  }
+  main.container {
+    max-width: 1100px;
+    margin: 40px auto;
+    background: rgba(255,255,255,0.9);
+    border-radius: 15px;
+    padding: 20px 25px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.25);
+    user-select: none;
+  }
+  main.container h1 {
+    font-weight: 700;
+    margin-bottom: 25px;
+    color: #222;
+  }
+  .controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 10px;
+  }
+  .controls input[type="search"] {
+    width: 240px;
+    padding: 8px 14px;
+    font-size: 1rem;
+    border-radius: 20px;
+    border: 1.4px solid #ccc;
+    outline: none;
+    transition: border-color 0.3s;
+  }
+  .controls input[type="search"]:focus {
+    border-color: #7abf0c;
+    box-shadow: 0 0 8px #7abf0cbb;
+  }
+  .controls select {
+    border-radius: 20px;
+    padding: 8px 18px;
+    cursor: pointer;
+    font-weight: 600;
+    border: 1.4px solid #ccc;
+    background-color: #e9fdd4;
+  }
+  .sales-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 7px;
+  }
+  .sales-table thead th {
+    background: transparent;
+    padding: 12px 20px;
+    font-weight: 700;
+    text-align: center;
+    border-bottom: 1.4px solid #bbb;
+  }
+  .sales-table tbody tr {
+    border-radius: 22px;
+    color: rgb(9, 64, 136);
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+  }
+  .sales-table tbody tr:hover {
+    filter: brightness(0.95);
+  }
+  /* Row colors based on category */
+  .cat-Natasha   { background: linear-gradient(90deg, #a0d468, #6c9e37); }
+  .cat-Personal  { background: linear-gradient(90deg, #c8b366, #927c3b); }
+  .cat-Avon      { background: linear-gradient(90deg, #85d0ce, #329696); }
+  .cat-BHI       { background: linear-gradient(90deg, #bb8a5f, #7a4e25); }
+  .cat-Tupperware{ background: linear-gradient(90deg, #fb8e33, #c55a08); }
+  .cat-Sunexchange{ background: linear-gradient(90deg, #f1d564, #92800d); }
+
+  .sales-table tbody td {
+    padding: 14px 15px;
+    text-align: center;
+    vertical-align: middle;
+  }
+  .sales-table tbody td.product {
+    text-align: left;
+  }
+  .sales-table tbody td.qty {
+    font-weight: 900;
+    font-size: 1.1rem;
+  }
+  .sales-table tbody td.revenue {
+    font-weight: 900;
+    font-size: 1.1rem;
+  }
+  .action a {
+    margin: 0 5px;
+    text-decoration: none;
+    font-weight: 500;
+    cursor: pointer;
+    user-select: none;
+  }
+  .edit {
+    color: rgb(9, 64, 136);
+  }
+  .delete {
+    color: #ef210b;
+  }
+</style>
+</head>
+<body>
+<header>
+    <div class="logo-title">
+        <img src="rainbow.png" alt="Rainbow Logo" />
+    </div>
+    <nav>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="productlisting.html">Product Listing</a>
+        <a href="stock_add.html">Stock Add</a>
+        <a href="stock_sold.html">Stock Sold</a>
+        <a href="daily_sales_report.html" class="active" style="color: white; text-decoration:none; padding: 8px 15px; border-radius: 8px; background: rgba(30, 5, 226, 0.6); filter: drop-shadow(0 0 6px #888); cursor: default;">Daily Sales Report</a>
+        <a href="settings.html">Settings</a>
+    </nav>
+</header>
+
+<main class="container" role="main" aria-labelledby="pageTitle">
+  <h1 id="pageTitle">Daily Sales Performance Overview</h1>
+  <div class="controls">
+    <input type="search" id="searchInput" placeholder="Search Product" aria-label="Search Product" />
+    <select id="categoryFilter" aria-label="Filter by Category">
+      <!-- Options will be dynamically populated -->
+    </select>
+  </div>
+  <table class="sales-table" aria-label="Sales Transaction History">
+    <thead>
+      <tr>
+        <th>Time</th>
+        <th>Product</th>
+        <th>QTY</th>
+        <th>Unit Price (₱)</th>
+        <th>Revenue (₱)</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="salesBody">
+      <!-- Filled by JS -->
+    </tbody>
+  </table>
+</main>
+
+<script>
+  const SALES_KEY = 'rainbow_sales';
+  const CATEGORIES_KEY = 'rainbow_categories';
+  const defaultCategories = ["Natasha", "Personal collection", "Avon", "BHI", "Tupperware", "Sunexchange"];
+
+  // Load sales data from localStorage
+  function loadSales() {
+    const saved = localStorage.getItem(SALES_KEY);
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch { return []; }
+    }
+    return [];
+  }
+
+  // Save sales data to localStorage
+  function saveSales(sales) {
+    localStorage.setItem(SALES_KEY, JSON.stringify(sales));
+  }
+
+  // Load categories from localStorage
+  function loadCategories() {
+    const saved = localStorage.getItem(CATEGORIES_KEY);
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch { return defaultCategories; }
+    }
+    return defaultCategories;
+  }
+
+  // Populate category filter dropdown
+  function populateCategoryFilter() {
+    const select = document.getElementById('categoryFilter');
+    select.innerHTML = '<option value="All">All Categories</option>';
+    const categories = loadCategories();
+    categories.forEach(cat => {
+      select.innerHTML += `<option value="${cat}">${cat}</option>`;
+    });
+  }
+
+  // Format date/time string from ISO string for display
+  function formatDateTime(isoString) {
+    const d = new Date(isoString);
+    const time = d.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+    const date = d.toLocaleDateString();
+    return `${time} ${date}`;
+  }
+
+  // Render sales table rows based on filter criteria
+  function renderSales() {
+    const sales = loadSales();
+    const tbody = document.getElementById('salesBody');
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const categoryFilter = document.getElementById('categoryFilter').value;
+
+    tbody.innerHTML = '';
+
+    sales.filter(sale => {
+      const matchesProduct = sale.productName.toLowerCase().includes(searchTerm);
+      const matchesCategory = (categoryFilter === 'All') || (sale.category === categoryFilter);
+      return matchesProduct && matchesCategory;
+    }).forEach((sale, index) => {
+      // Color class by category (use simple name mapping, make lower and remove spaces)
+      let catKey = sale.category.toLowerCase().replace(/\s/g, '');
+      const catClassMap = {
+        'natasha': 'cat-Natasha',
+        'personalcollection': 'cat-Personal',
+        'avon': 'cat-Avon',
+        'bhi': 'cat-BHI',
+        'tupperware': 'cat-Tupperware',
+        'sunexchange': 'cat-Sunexchange'
+      };
+      const colorClass = catClassMap[catKey] || '';
+
+      // Calculate revenue
+      const revenue = sale.quantitySold * sale.salePrice;
+
+      const tr = document.createElement('tr');
+      tr.className = colorClass;
+
+      tr.innerHTML = `
+        <td>${formatDateTime(sale.date)}</td>
+        <td style="text-align:left;">
+          ${sale.productName}
+        </td>
+        <td class="qty">${sale.quantitySold}</td>
+        <td>₱${sale.unitCost.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2})}</td>
+        <td class="revenue">₱${revenue.toLocaleString(undefined, {minimumFractionDigits:0, maximumFractionDigits: 2})}</td>
+        <td class="action">
+          <a href="#" class="edit" onclick="editSale(${index})">Edit</a>
+          <a href="#" class="delete" onclick="deleteSale(${index})">Delete</a>
+        </td>
+      `;
+
+      tbody.appendChild(tr);
+    });
+
+    if(tbody.children.length === 0){
+      const emptyTr = document.createElement('tr');
+      emptyTr.innerHTML = `<td colspan="6" style="text-align:center; color:#666;">No matching sales found.</td>`;
+      tbody.appendChild(emptyTr);
+    }
+  }
+
+  // Edit sale function
+  function editSale(index) {
+    const sales = loadSales();
+    const sale = sales[index];
+    const newQty = prompt("Edit quantity sold:", sale.quantitySold);
+    if (newQty === null) return; // Cancelled
+    const qtyNum = parseInt(newQty);
+    if (isNaN(qtyNum) || qtyNum < 1) {
+      alert("Invalid quantity.");
+      return;
+    }
+    // Edit quantity and update
+    sales[index].quantitySold = qtyNum;
+    saveSales(sales);
+    renderSales();
+  }
+
+  // Delete sale function
+  function deleteSale(index) {
+    const sales = loadSales();
+    const sale = sales[index];
+    if (confirm(`Delete sale of "${sale.productName}" (${sale.quantitySold} qty)?`)) {
+      sales.splice(index, 1);
+      saveSales(sales);
+      renderSales();
+    }
+  }
+
+  document.getElementById('searchInput').addEventListener('input', renderSales);
+  document.getElementById('categoryFilter').addEventListener('change', renderSales);
+
+  // Listen for changes in localStorage to sync with other pages
+  window.addEventListener('storage', e => {
+    if (e.key === SALES_KEY) {
+      renderSales(); // Re-render when sales data changes
+    } else if (e.key === CATEGORIES_KEY) {
+      populateCategoryFilter(); // Update categories when changed
+      renderSales(); // Re-render in case category filter affects results
+    }
+  });
+
+  window.onload = () => {
+    populateCategoryFilter();
+    renderSales();
+  };
+</script>
+</body>
+</html>
