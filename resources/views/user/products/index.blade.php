@@ -4,11 +4,6 @@
 
 @section('content')
 <div class="products-container">
-    <!-- Page Header -->
-    <div class="page-header">
-        <h1>📦 Product Inventory</h1>
-        <a href="{{ route('products.create') }}" class="btn btn-primary">+ Add New Product</a>
-    </div>
 
     <!-- Search & Filter -->
     <div class="search-filter">
@@ -44,7 +39,7 @@
                             <th>Stock</th>
                             <th>Min Stock</th>
                             <th>Status</th>
-                            <th>Actions</th>
+                           
                         </tr>
                     </thead>
                     <tbody>
@@ -68,16 +63,7 @@
                                     <span class="badge badge-success">IN STOCK</span>
                                 @endif
                             </td>
-                            <td>
-                                <div class="action-buttons">
-                                    <a href="{{ route('products.edit', $product->id) }}" class="btn btn-info btn-xs">Edit</a>
-                                    <form action="{{ route('products.destroy', $product->id) }}" method="POST" onsubmit="return confirm('Delete this product?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-xs">Delete</button>
-                                    </form>
-                                </div>
-                            </td>
+
                         </tr>
                         @endforeach
                     </tbody>
@@ -86,7 +72,7 @@
 
             <!-- Pagination -->
             <div class="pagination-wrapper">
-                {{ $products->links() }}
+                {{ $products->appends(request()->query())->links() }}
             </div>
             @else
             <p class="text-center text-muted">No products found. <a href="{{ route('products.create') }}">Create one now</a></p>

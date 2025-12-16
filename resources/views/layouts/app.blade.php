@@ -388,15 +388,15 @@
                 <li><a href="{{ route('products.index') }}" class="@if(request()->routeIs('products.*')) active @endif" style="text-decoration: none; color: black; font-weight: 600;">📦 Products Listing</a></li>
                 <li><a href="{{ route('stock_sold') }}" class="@if(request()->routeIs('stock_sold')) active @endif" style="text-decoration: none; color: black; font-weight: 600;">🛒 Stock Sold</a></li>
                 <li><a href="{{ route('daily_sales_report') }}" class="@if(request()->routeIs('daily_sales_report')) active @endif" style="text-decoration: none; color: black; font-weight: 600;">📅 Daily Sales Report</a></li>
-                                        <li><a href="{{ route('settings') }}" class="@if(request()->routeIs('settings')) active @endif" style="text-decoration: none; color: black; font-weight: 600;">⚙️ Settings</a></li>
 
                 @auth
                     @if(Auth::user()->role === 'admin')
-                        <li style="color: white;">|</li>
                         <li><a href="{{ route('categories.index') }}" class="@if(request()->routeIs('categories.*')) active @endif" style="text-decoration: none; color: black; font-weight: 600;">🏷️ Categories</a></li>
                         <li><a href="{{ route('activity-logs.index') }}" class="@if(request()->routeIs('activity-logs.*')) active @endif" style="text-decoration: none; color: black; font-weight: 600;">📋 Activity Logs</a></li>
                     @endif
                 @endauth
+
+                <li><a href="{{ route('settings') }}" class="@if(request()->routeIs('settings')) active @endif" style="text-decoration: none; color: black; font-weight: 600;">⚙️ Settings</a></li>
             </ul>
         </nav>
         <div class="header-right">

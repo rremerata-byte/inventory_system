@@ -12,11 +12,27 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::with('category')->paginate(15);
+        $query = Product::with('category');
+
+        // Search by product name
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        // Filter by category
+        if ($request->filled('category')) {
+            $query->where('category_id', $request->category);
+        }
+
+        $products = $query->paginate(15);
         $categories = Category::all();
-        return view('products.index', compact('products', 'categories'));
+        $view = auth()->user()?->role === 'admin'
+            ? 'admin.products.index'
+            : 'user.products.index';
+
+        return view($view, compact('products', 'categories'));
     }
 
     /**

@@ -24,7 +24,11 @@ class SaleController extends Controller
     public function create()
     {
         $products = Product::where('stock', '>', 0)->get();
-        return view('sales.create', compact('products'));
+        $view = auth()->user()?->role === 'admin'
+            ? 'admin.sales.create'
+            : 'user.sales.create';
+
+        return view($view, compact('products'));
     }
 
     /**
@@ -197,7 +201,11 @@ class SaleController extends Controller
             ->limit(5)
             ->get();
 
-        return view('sales.daily-report', [
+        $view = auth()->user()?->role === 'admin'
+            ? 'admin.sales.daily-report'
+            : 'user.sales.daily-report';
+
+        return view($view, [
             'sales' => $sales,
             'totalRevenue' => $totalRevenue,
             'totalSales' => $totalSales,

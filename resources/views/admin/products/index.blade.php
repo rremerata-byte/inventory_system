@@ -86,7 +86,7 @@
 
             <!-- Pagination -->
             <div class="pagination-wrapper">
-                {{ $products->links() }}
+                {{ $products->appends(request()->query())->links() }}
             </div>
             @else
             <p class="text-center text-muted">No products found. <a href="{{ route('products.create') }}">Create one now</a></p>

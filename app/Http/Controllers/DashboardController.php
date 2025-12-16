@@ -13,6 +13,12 @@ class DashboardController extends Controller
 {
     public function index()
     {
+        $user = auth()->user();
+
+        if ($user && $user->role === 'admin') {
+            return $this->adminDashboard();
+        }
+
         return $this->staffDashboard();
     }
 
@@ -62,7 +68,7 @@ class DashboardController extends Controller
             'inventoryData' => Category::withCount('products')->pluck('products_count')->toArray()
         ];
 
-        return view('admin-dashboard', [
+        return view('admin.dashboard', [
             'totalProducts' => $totalProducts,
             'activeUsers' => $activeUsers,
             'totalRevenue' => $totalRevenue,
@@ -153,7 +159,7 @@ class DashboardController extends Controller
             ]
         ];
 
-        return view('staffdashboard', [
+        return view('user.dashboard', [
             'stats' => $stats,
             'lowStockProducts' => $lowStockProducts,
             'recentSales' => $recentSales,
