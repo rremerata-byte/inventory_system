@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Stock Alerts - Rainbow Direct Selling</title>
+<style>
+  body {
+    margin: 0;
+    font-family: "Poppins", sans-serif;
+    background: url('rainbow.png') no-repeat center;
+    background-size: cover;
+    background-attachment: fixed;
+    user-select: none;
+  }
+  /* Rainbow Header */
+  header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
+      color: white;
+      padding: 10px 20px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  }
+  header img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      margin-right: 10px;
+  }
+  nav a {
+      text-decoration: none;
+      color: white;
+      padding: 8px 15px;
+      border-radius: 8px;
+      font-weight: 500;
+      transition: background 0.3s;
+  }
+  nav a:hover, nav a.active {
+      background: rgba(255, 255, 255, 0.3);
+  }
+  .container {
+    max-width: 900px;
+    margin: 40px auto 60px;
+    background: rgba(255 255 255 / 0.95);
+    border-radius: 25px;
+    padding: 30px 40px 40px;
+    box-shadow:
+      0 0 20px rgba(255,0,0,0.1),
+      0 0 40px rgba(255,127,0,0.1),
+      0 0 60px rgba(255,255,0,0.15),
+      0 0 80px rgba(0,255,0,0.1),
+      0 0 100px rgba(0,0,255,0.1),
+      0 0 120px rgba(75,0,130,0.1),
+      0 0 140px rgba(139,0,255,0.1);
+  }
+  a.back-link {
+    display: inline-block;
+    color: #4caf50;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    margin-bottom: 20px;
+  }
+  a.back-link:hover {
+    text-decoration: underline;
+  }
+  h1 {
+    font-weight: 700;
+    margin-bottom: 5px;
+    user-select: none;
+  }
+  p.subtitle {
+    color: #555;
+    margin-top: 0;
+    margin-bottom: 20px;
+    user-select: none;
+  }
+  .global-min-stock {
+    background: linear-gradient(135deg, #f3fbb8, #daeb82);
+    padding: 15px 20px;
+    border-radius: 15px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+    max-width: 400px;
+  }
+  .global-min-stock label {
+    font-weight: 700;
+    color: #444;
+  }
+  .global-min-stock small {
+    display: block;
+    margin-top: 5px;
+    color: #888;
+    font-weight: 500;
+  }
+  .global-min-stock input[type=number] {
+    margin-top: 15px;
+    width: 80px;
+    border-radius: 10px;
+    border: 1.5px solid #ccc;
+    padding: 5px 10px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    outline-offset: 3px;
+    user-select: text;
+  }
+  .product-overrides {
+    max-width: 900px;
+    overflow-x: auto;
+  }
+  table.stock-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 7px;
+    user-select: none;
+  }
+  table.stock-table thead tr {
+    background-color: #b3bdb1;
+  }
+  table.stock-table thead th {
+    padding: 14px 18px;
+    text-align: center;
+    font-weight: 700;
+    color: black;
+  }
+  table.stock-table tbody tr {
+    background: white;
+    border-bottom: 10px solid white;
+  }
+  table.stock-table tbody tr.highlight {
+    background: linear-gradient(90deg, #f3fbb8, #daeb82);
+  }
+  table.stock-table tbody td {
+    padding: 14px 18px;
+    text-align: center;
+  }
+  table.stock-table tbody td.product {
+    text-align: left;
+    font-weight: 600;
+  }
+  table.stock-table tbody input[type=number] {
+    width: 75px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 1.6px solid #aaa;
+    font-weight: 600;
+    font-size: 1rem;
+    box-sizing: border-box;
+    user-select: text;
+  }
+</style>
+</head>
+<body>
+
+<header>
+    <div class="logo-title">
+        <img src="rainbow.png" alt="Rainbow Logo" />
+    </div>
+    <nav>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="productlisting.html">Product Listing</a>
+        <a href="stock_add.html">Stock Add</a>
+        <a href="stock_sold.html">Stock Sold</a>
+        <a href="daily_sales_report.html">Daily Sales Report</a>
+        <a href="settings.html" class="active" style="color: white; text-decoration:none; padding: 8px 15px; border-radius: 8px; background: rgba(128,128,255,0.6); filter: drop-shadow(0 0 6px #888); cursor: default;">Settings</a>
+    </nav>
+</header>
+
+<div class="container">
+  <a href="settings.html" class="back-link">← Back to Settings Overview</a>
+  <h1>Stock Alerts</h1>
+  <p class="subtitle">Configure minimum stock level notification</p>
+
+  <div class="global-min-stock">
+    <label for="globalMinStock">Global Minimum Stock Level</label>
+    <small>Trigger an alert when any product stock falls below this quantity.</small>
+    <input type="number" id="globalMinStock" min="0" value="10" />
+  </div>
+
+  <div class="product-overrides" role="region" aria-labelledby="overridesTitle">
+    <h2 id="overridesTitle" style="user-select:none; margin-bottom:10px;">Product-Specific Overrides</h2>
+    <table class="stock-table" aria-describedby="descOverrides">
+      <caption id="descOverrides" style="visibility:hidden; height:0;">Table lists products with current stock and alert threshold override</caption>
+      <thead>
+        <tr>
+          <th scope="col">Product Name</th>
+          <th scope="col">Current Stock</th>
+          <th scope="col">Alert Threshold</th>
+        </tr>
+      </thead>
+      <tbody id="productStockBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  // Load products from Product Listing from localStorage or default if none
+  function loadProducts() {
+    const saved = localStorage.getItem('rainbow_products');
+    if(saved){
+      try {
+        return JSON.parse(saved);
+      }catch{}
+    }
+    return [];
+  }
+
+  const products = loadProducts();
+
+  // Load global minimum stock override
+  const globalMinStockInput = document.getElementById('globalMinStock');
+  if(localStorage.getItem('rainbow_global_min_stock') !== null){
+    globalMinStockInput.value = localStorage.getItem('rainbow_global_min_stock');
+  }
+
+  function saveGlobalMinStock(){
+    localStorage.setItem('rainbow_global_min_stock', globalMinStockInput.value);
+  }
+
+  globalMinStockInput.addEventListener('change', () => {
+    if(globalMinStockInput.value < 0) globalMinStockInput.value = 0;
+    saveGlobalMinStock();
+  });
+
+  // Maintain product-specific alert thresholds, load/save from localStorage
+  function loadOverrides(){
+    const saved = localStorage.getItem('rainbow_product_alert_overrides');
+    if(saved){
+      try { return JSON.parse(saved);} catch {return {};}
+    }
+    return {};
+  }
+  function saveOverrides(overrides){
+    localStorage.setItem('rainbow_product_alert_overrides', JSON.stringify(overrides));
+  }
+
+  let overrides = loadOverrides();
+
+  const tbody = document.getElementById('productStockBody');
+
+  function renderTable(){
+    tbody.innerHTML = '';
+    products.forEach((prod, idx) => {
+      // Use override or fallback to globalMinStockInput value
+      const alertThreshold = overrides[prod.name] !== undefined ? overrides[prod.name] : Number(globalMinStockInput.value);
+
+      const tr = document.createElement('tr');
+      // Highlight row if stock <= alert threshold
+      if(prod.stock <= alertThreshold){
+        tr.classList.add('highlight');
+      }
+      tr.innerHTML = `
+        <td class="product">${prod.name}</td>
+        <td><input type="number" min="0" value="${prod.stock}" disabled /></td>
+        <td>
+          <input type="number" min="0" value="${alertThreshold}" data-product="${prod.name}" class="thresholdInput" />
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  // Listen for changes to thresholds input to update overrides and save
+  tbody.addEventListener('input', e => {
+    if(e.target.classList.contains('thresholdInput')){
+      const product = e.target.getAttribute('data-product');
+      let val = parseInt(e.target.value);
+      if(isNaN(val) || val < 0) val = 0;
+      e.target.value = val;
+      overrides[product] = val;
+      saveOverrides(overrides);
+      renderTable();
+    }
+  });
+
+  renderTable();
+</script>
+
+</body>
+</html>

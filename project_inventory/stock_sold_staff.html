@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Stock Sold - Rainbow Direct Selling</title>
+<style>
+  body {
+    margin: 0;
+    font-family: "Poppins", sans-serif;
+    background: url('rainbow.png') no-repeat center;
+    background-size: cover;
+    background-attachment: fixed;
+  }
+  /* Rainbow Header */
+  header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
+      color: white;
+      padding: 10px 20px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  }
+  header img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      margin-right: 10px;
+  }
+  nav a {
+      text-decoration: none;
+      color: white;
+      padding: 8px 15px;
+      border-radius: 8px;
+      font-weight: 500;
+      transition: background 0.3s;
+  }
+  nav a:hover, nav a.active {
+      background: rgba(255, 255, 255, 0.3);
+  }
+  main.container {
+    max-width: 420px;
+    margin: 40px auto;
+    padding: 25px 20px;
+    border-radius: 15px;
+    background: linear-gradient(to bottom, #55ab5b, #4476d8);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+    color: #fff;
+    font-weight: 600;
+    user-select: none;
+  }
+  main.container h2 {
+    margin-bottom: 20px;
+    font-weight: 700;
+  }
+  label {
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 8px;
+    font-size: 1rem;
+    user-select: none;
+  }
+  select, input[type="number"], input[type="text"] {
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 1rem;
+    border-radius: 10px;
+    border: none;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+    font-weight: 600;
+    box-sizing: border-box;
+    user-select: text;
+    appearance: none;
+    background: #d3e2fe;
+    color: #111;
+    outline-offset: 4px;
+    cursor: pointer;
+    transition: box-shadow 0.3s ease;
+    text-align: center;
+  }
+  select:focus, input[type="number"]:focus, input[type="text"]:focus {
+    background: #b3ccfe;
+    box-shadow: 0 0 15px #659ecb;
+    outline: none;
+  }
+  input[type=number] {
+    -moz-appearance: textfield;
+  }
+  button[type="submit"] {
+    margin-top: 30px;
+    background: #f4ff85;
+    border: none;
+    padding: 14px 0;
+    color: #074c01;
+    font-weight: 700;
+    border-radius: 25px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 1.3rem;
+    transition: background 0.3s ease;
+    user-select: none;
+  }
+  button[type="submit"]:hover {
+    background: #c8db73;
+  }
+</style>
+</head>
+<body>
+
+<header>
+    <div class="logo-title">
+        <img src="rainbow.png" alt="Rainbow Logo" />
+    </div>
+    <nav>
+        <a href="dashboard_staff.html">Dashboard</a>
+        <a href="productlisting_staff.html">Product Listing</a>
+        <a href="stock_sold_staff.html" class="active" style="color: white; text-decoration:none; padding: 8px 15px; border-radius: 8px; background: rgba(25, 33, 240, 0.808); filter: drop-shadow(0 0 6px #888); cursor: default;">Stock Sold</a>
+        <a href="daily_sales_report_staff.html">Daily Sales Report</a>
+        <a href="settings_staff.html">Settings</a>
+    </nav>
+</header>
+
+<main class="container" role="main" aria-labelledby="formTitle">
+  <h2 id="formTitle">Log Stock Sale</h2>
+  <form id="stockSaleForm" autocomplete="off" novalidate>
+    <label for="productSelect">Product Name/ID</label>
+    <select id="productSelect" required aria-required="true" aria-describedby="selectHelp">
+      <option value="" disabled selected>Select a product</option>
+    </select>
+    <small id="selectHelp" style="color:#eef; font-weight: 500; user-select:none;">Select the product sold</small>
+
+    <label for="quantitySold">Quantity Sold</label>
+    <input type="number" id="quantitySold" name="quantitySold" min="1" placeholder="0" required aria-required="true" />
+
+    <label for="unitCostSold">Unit Cost (₱)</label>
+    <input type="number" id="unitCostSold" name="unitCostSold" placeholder="0.00" min="0" step="0.01" required aria-required="true" />
+
+    <label for="salePriceSold">Sale Price per Unit (₱)</label>
+    <input type="number" id="salePriceSold" name="salePriceSold" placeholder="0.00" min="0" step="0.01" required aria-required="true" />
+
+    <label for="categorySold">Category</label>
+    <select id="categorySold" name="categorySold" disabled style="background:#aaccee; border:none; border-radius: 15px; padding: 10px 15px; font-weight:600; color:#111; cursor: default;">
+      <option value="">Select a product first</option>
+      <!-- categories will be dynamically loaded -->
+    </select>
+
+    <button type="submit">Log Sale</button>
+  </form>
+</main>
+
+<script>
+  const PRODUCTS_KEY = 'rainbow_products';
+  const SALES_KEY = 'rainbow_sales';
+  const CATEGORIES_KEY = 'rainbow_categories';
+
+  const defaultProducts = [
+    { name: "KM Natasha Body Spray", price: 116, stock: 100, minStock: 100, category: "Natasha", unitCost: 100 },
+    { name: "Natasha Signature Scent", price: 170, stock: 80, minStock: 200, category: "Natasha", unitCost: 120 },
+    { name: "Natasha Radiant Set", price: 280, stock: 70, minStock: 150, category: "Natasha", unitCost: 150 },
+    { name: "Natasha Concealer", price: 180, stock: 50, minStock: 150, category: "Natasha", unitCost: 90 },
+    { name: "PC Herbal Essential Oil", price: 320, stock: 60, minStock: 80, category: "Personal collection", unitCost: 180 },
+    { name: "PC Relaxing Bath Salts", price: 200, stock: 45, minStock: 70, category: "Personal collection", unitCost: 120 },
+    { name: "Avon Ultra Matte Lipstick", price: 350, stock: 120, minStock: 150, category: "Avon", unitCost: 210 },
+    { name: "Avon Glow Foundation", price: 420, stock: 90, minStock: 110, category: "Avon", unitCost: 225 },
+    { name: "BHI Vitamin C Complex", price: 500, stock: 250, minStock: 200, category: "BHI", unitCost: 400 },
+    { name: "BHI Omega-3 Capsules", price: 720, stock: 180, minStock: 200, category: "BHI", unitCost: 600 },
+    { name: "Tupperware Modular Mates", price: 385, stock: 60, minStock: 50, category: "Tupperware", unitCost: 220 },
+    { name: "Tupperware Quick Shake", price: 450, stock: 45, minStock: 50, category: "Tupperware", unitCost: 275 },
+    { name: "Sunexchange Solar Panel Kit", price: 20000, stock: 5, minStock: 10, category: "Sunexchange", unitCost: 15000 },
+    { name: "Sunexchange Solar Battery", price: 9000, stock: 3, minStock: 7, category: "Sunexchange", unitCost: 7500 }
+  ];
+
+  function loadProducts() {
+    const saved = localStorage.getItem(PRODUCTS_KEY);
+    if(saved) {
+      try {
+        const loaded = JSON.parse(saved);
+        if (Array.isArray(loaded) && loaded.length > 0) return loaded;
+      } catch {}
+    }
+    return defaultProducts;
+  }
+
+  function saveProducts(products) {
+    localStorage.setItem(PRODUCTS_KEY, JSON.stringify(products));
+  }
+
+  function loadSales() {
+    const saved = localStorage.getItem(SALES_KEY);
+    if(saved) {
+      try { return JSON.parse(saved); } catch {}
+    }
+    return [];
+  }
+
+  function saveSales(sales) {
+    localStorage.setItem(SALES_KEY, JSON.stringify(sales));
+  }
+
+  function loadCategories() {
+    const saved = localStorage.getItem(CATEGORIES_KEY);
+    if(saved){
+      try {
+        return JSON.parse(saved);
+      } catch {
+        return ["Natasha", "Personal collection", "Avon", "BHI", "Tupperware", "Sunexchange"];
+      }
+    }
+    return ["Natasha", "Personal collection", "Avon", "BHI", "Tupperware", "Sunexchange"];
+  }
+
+  const productSelect = document.getElementById('productSelect');
+  const categorySold = document.getElementById('categorySold');
+  const unitCostSold = document.getElementById('unitCostSold');
+  const salePriceSold = document.getElementById('salePriceSold');
+  const quantitySold = document.getElementById('quantitySold');
+  const stockSaleForm = document.getElementById('stockSaleForm');
+
+  let products = loadProducts();
+  let categories = loadCategories();
+
+  function populateCategorySelect(){
+    categorySold.innerHTML = '';
+    categories.forEach(cat => {
+      const opt = document.createElement('option');
+      opt.value = cat;
+      opt.textContent = cat;
+      categorySold.appendChild(opt);
+    });
+    categorySold.selectedIndex = -1;
+  }
+
+  function populateProductSelect() {
+    productSelect.innerHTML = '<option value="" disabled selected>Select a product</option>';
+    products.forEach((p, i) => {
+      const option = document.createElement('option');
+      option.value = i;
+      option.textContent = p.name;
+      productSelect.appendChild(option);
+    });
+  }
+
+  populateCategorySelect();
+  populateProductSelect();
+
+  productSelect.addEventListener('change', () => {
+    const idx = productSelect.value;
+    if(idx === '') {
+      categorySold.selectedIndex = -1;
+      unitCostSold.value = '';
+      salePriceSold.value = '';
+      quantitySold.value = '';
+      return;
+    }
+    const p = products[idx];
+    categorySold.value = p.category;
+    unitCostSold.value = p.price.toFixed(2);
+    salePriceSold.value = p.price.toFixed(2);
+    quantitySold.value = '';
+  });
+
+  stockSaleForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const idx = productSelect.value;
+    if (!idx) {
+      alert("Please select a product.");
+      return;
+    }
+    const qtySold = parseInt(quantitySold.value, 10);
+    const cost = parseFloat(unitCostSold.value);
+    const salePrice = parseFloat(salePriceSold.value);
+    const userRole = "Admin";  // replace with actual logged in user role if available
+
+    if (isNaN(qtySold) || qtySold <= 0) {
+      alert("Enter valid quantity sold.");
+      return;
+    }
+    if (isNaN(cost) || cost < 0) {
+      alert("Enter valid unit cost.");
+      return;
+    }
+    if (isNaN(salePrice) || salePrice < 0) {
+      alert("Enter valid sale price.");
+      return;
+    }
+    if (qtySold > products[idx].stock) {
+      alert(`Insufficient stock. Only ${products[idx].stock} available.`);
+      return;
+    }
+
+    products[idx].stock -= qtySold;
+    saveProducts(products);
+
+    let sales = loadSales();
+    sales.push({
+      productName: products[idx].name,
+      category: products[idx].category,
+      quantitySold: qtySold,
+      unitCost: cost,
+      salePrice: salePrice,
+      date: new Date().toISOString()
+    });
+    saveSales(sales);
+
+    // Append new log entry to user logs
+    let userLogs = JSON.parse(localStorage.getItem('rainbow_user_logs') || "[]");
+    userLogs.push({
+      timestamp: new Date().toISOString(),
+      action: "Stock Sale",
+      details: `Logged sale of ${qtySold} units of ${products[idx].name} for ₱${(qtySold * salePrice).toLocaleString()}`,
+      userRole: userRole,
+      colorClass: "log-stock-sold"
+    });
+    localStorage.setItem('rainbow_user_logs', JSON.stringify(userLogs));
+
+    alert(`Sale recorded:\nProduct: ${products[idx].name}\nQuantity Sold: ${qtySold}\nSale Price: ₱${salePrice.toFixed(2)} each`);
+    stockSaleForm.reset();
+    categorySold.selectedIndex = -1;
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Rainbow Direct Selling Login</title>
+<style>
+    body {
+        margin: 0;
+        font-family: "Poppins", sans-serif;
+        background: url('rainbow.png') no-repeat center;
+        background-size: cover;
+        background-attachment: fixed;
+    }
+    header {
+        background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
+        color: black;
+        text-align: center;
+        padding: 10px;
+        font-size: 1.3rem;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    header img {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+    .login-box {
+        background-color: rgba(255, 255, 255, 0.9);
+        width: 320px;
+        margin: 100px auto;
+        padding: 30px;
+        border-radius: 10px;
+        text-align: left;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+    }
+    label {
+        font-weight: bold;
+        display: block;
+        margin-top: 10px;
+    }
+    input[type="text"], input[type="password"] {
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+        caret-color: red;
+    }
+    .roles {
+        margin-top: 10px;
+    }
+    .roles input[type="radio"] {
+        accent-color: red;
+    }
+    button {
+        margin-top: 15px;
+        width: 100%;
+        padding: 10px;
+        border: none;
+        background-color: #1e3a8a;
+        color: white;
+        font-weight: bold;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+    button:hover {
+        background-color: #2563eb;
+    }
+    .roles label {
+        margin-right: 10px;
+    }
+</style>
+</head>
+<body>
+    <header>
+        <img src="rainbow.png" alt="Rainbow Logo" />
+        Welcome To Rainbow Direct Selling INVENTORY SYSTEM
+    </header>
+    <div class="login-box">
+        <form onsubmit="login(event)">
+            <label>Email:</label>
+            <input type="text" id="email" required>
+            <label>Password:</label>
+            <input type="password" id="password" required>
+            <label>Role:</label>
+            <div class="roles">
+                <label><input type="radio" name="role" value="admin" required> Admin</label>
+                <label><input type="radio" name="role" value="staff"> Staff</label>
+            </div>
+            <button type="submit">Sign In</button>
+        </form>
+    </div>
+    <script>
+        function logActivity(action, details, userRole) {
+            const STORAGE_KEY = 'rainbow_user_logs';
+            let logs = [];
+
+            try {
+                logs = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+            } catch {
+                logs = [];
+            }
+
+            logs.push({
+                timestamp: new Date().toISOString(),
+                action: action,
+                details: details,
+                userRole: userRole,
+                colorClass: (action.toLowerCase().includes('login') ? (userRole.toLowerCase() === 'admin' ? 'log-login-admin' : 'log-login-staff') : '')
+            });
+
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(logs));
+        }
+
+        function login(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const roleInput = document.querySelector('input[name="role"]:checked');
+
+            if (!roleInput) {
+                alert("Please select a role.");
+                return;
+            }
+            const role = roleInput.value.toLowerCase();
+
+            // Note: In real app, add actual authentication and password checks here.
+
+            // Log the login action
+            logActivity('Logged Login', `User ${email} logged in as ${role.charAt(0).toUpperCase() + role.slice(1)}`, role);
+
+            if (role === 'admin') {
+                window.location.href = 'dashboard.html';
+            } else if (role === 'staff') {
+                window.location.href = 'dashboard_staff.html';  // Make sure this page exists
+            } else {
+                alert('Invalid role selected.');
+            }
+        }
+    </script>
+</body>
+</html>

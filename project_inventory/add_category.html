@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Add Category - Rainbow Direct Selling</title>
+<style>
+  body {
+    margin: 0;
+    font-family: "Poppins", sans-serif;
+    background: url('rainbow.png') no-repeat center;
+    background-size: cover;
+    background-attachment: fixed;
+  }
+  /* Rainbow Header */
+  header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
+      color: white;
+      padding: 10px 20px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  }
+  header img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      margin-right: 10px;
+  }
+  nav a {
+      text-decoration: none;
+      color: white;
+      padding: 8px 15px;
+      border-radius: 8px;
+      font-weight: 500;
+      transition: background 0.3s;
+  }
+  nav a:hover, nav a.active {
+      background: rgba(255, 255, 255, 0.3);
+  }
+
+  main.container {
+    max-width: 520px;
+    margin: 80px auto 40px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 30px;
+    padding: 30px 36px 40px;
+    box-sizing: border-box;
+    box-shadow:
+      0 0 60px rgba(255, 127, 0, 0.1),
+      0 0 90px rgba(75, 0, 130, 0.1);
+  }
+
+  a.back-link {
+    display: inline-block;
+    color: #4caf50;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    margin-bottom: 20px;
+  }
+  a.back-link:hover {
+    text-decoration: underline;
+  }
+
+  h1 {
+    margin: 0 0 15px 0;
+    font-weight: 700;
+    font-size: 1.9rem;
+    color: #111;
+    user-select: none;
+  }
+
+  .instructions {
+    color: #555;
+    margin-bottom: 30px;
+    font-weight: 500;
+    user-select: none;
+  }
+
+  form.add-category-form {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 25px;
+  }
+  form.add-category-form input[type="text"] {
+    flex-grow: 1;
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 12px 16px;
+    border-radius: 18px;
+    border: 2px solid #ccc;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
+    outline-offset: 4px;
+  }
+  form.add-category-form input[type="text"]:focus {
+    border-color: #f90;
+    outline: none;
+  }
+  form.add-category-form button {
+    background-color: #f90;
+    border: none;
+    color: white;
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 12px 24px;
+    border-radius: 18px;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.3s ease;
+  }
+  form.add-category-form button:hover {
+    background-color: #d17f00;
+  }
+
+  table.category-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 5px;
+    box-shadow: 0 3px 14px rgb(0 0 0 / 0.07);
+    border-radius: 14px;
+  }
+  table.category-table thead tr {
+    background-color: #c7cfc2;
+    border-radius: 14px 14px 0 0;
+    box-shadow: inset 0 0 7px rgb(0 0 0 / 0.05);
+  }
+  table.category-table thead th {
+    font-weight: 700;
+    color: black;
+    padding: 12px 15px;
+    text-align: left;
+    user-select: none;
+  }
+  table.category-table tbody tr {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgb(0 0 0 / 0.02);
+  }
+  table.category-table tbody tr td {
+    padding: 12px 15px;
+    user-select: none;
+  }
+  table.category-table tbody tr td.actions {
+    width: 140px;
+    text-align: right;
+  }
+  table.category-table tbody tr td.actions a {
+    cursor: pointer;
+    font-weight: 600;
+    margin-left: 15px;
+    text-decoration: underline;
+  }
+  table.category-table tbody tr td.actions a.delete {
+    color: #d9534f;
+  }
+  table.category-table tbody tr td.actions a.edit {
+    color: #0275d8;
+  }
+</style>
+</head>
+<body>
+
+<header>
+    <div class="logo-title">
+        <img src="rainbow.png" alt="Rainbow Logo" />
+    </div>
+    <nav>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="productlisting.html">Product Listing</a>
+        <a href="stock_add.html">Stock Add</a>
+        <a href="stock_sold.html">Stock Sold</a>
+        <a href="daily_sales_report.html">Daily Sales Report</a>
+        <a href="settings.html" class="active" style="color: white; text-decoration:none; padding: 8px 15px; border-radius: 8px; background: rgba(128,128,255,0.6); filter: drop-shadow(0 0 6px #888); cursor: default;">Settings</a>
+    </nav>
+</header>
+
+<main class="container" role="main" aria-label="Add Category Section">
+  <a href="settings.html" class="back-link" aria-label="Back to Settings Overview">← Back to Settings Overview</a>
+  <h1>Add Category</h1>
+  <p class="instructions">Manage product categories used in the inventory system.</p>
+
+  <form autocomplete="off" novalidate class="add-category-form" id="addCategoryForm">
+    <input type="text" id="newCategoryName" placeholder="Enter new category name" required aria-required="true" aria-label="New Category Name" />
+    <button type="submit" aria-label="Add New Category">ADD</button>
+  </form>
+
+  <table class="category-table" aria-label="Existing Categories">
+    <thead>
+      <tr>
+        <th>Category Name</th>
+        <th style="text-align:right;">Actions</th>
+      </tr>
+    </thead>
+    <tbody id="categoryTableBody"></tbody>
+  </table>
+</main>
+
+<script>
+  const CATEGORY_STORAGE_KEY = 'rainbow_categories';
+
+  // Load categories from localStorage or default list
+  function loadCategories() {
+    const stored = localStorage.getItem(CATEGORY_STORAGE_KEY);
+    if (stored) {
+      try {
+        return JSON.parse(stored);
+      } catch {
+        return [];
+      }
+    }
+    return ["Natasha", "Personal Collection", "Avon", "BHI", "Tupperware", "Sunexchange"];
+  }
+
+  // Save categories and add 'All' at front in storage
+  function saveCategories(categories) {
+    // Ensure "All" is not saved as a category internally
+    const filtered = categories.filter(c => c !== "All");
+    localStorage.setItem(CATEGORY_STORAGE_KEY, JSON.stringify(filtered));
+  }
+
+  const categoryTableBody = document.getElementById('categoryTableBody');
+
+  function renderCategoryTable() {
+    const categories = loadCategories();
+    categoryTableBody.innerHTML = '';
+    if (categories.length === 0) {
+      categoryTableBody.innerHTML = '<tr><td colspan="2" style="text-align:center;color:#888;">No categories found.</td></tr>';
+      return;
+    }
+    categories.forEach((cat, idx) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${cat}</td>
+        <td class="actions" style="text-align:right;">
+          <a href="#" class="edit" style="color:#0275d8;">Edit</a>
+          <a href="#" class="delete" style="color:#d9534f;">Delete</a>
+        </td>
+      `;
+      tr.querySelector('.edit').addEventListener('click', e => {
+        e.preventDefault();
+        const newName = prompt('Edit category name:', cat);
+        if (newName && newName.trim() !== '') {
+          const cats = loadCategories();
+          cats[idx] = newName.trim();
+          saveCategories(cats);
+          renderCategoryTable();
+          alert('Category edited.');
+          // Trigger other pages to update category selects on reload or by storage event
+        }
+      });
+      tr.querySelector('.delete').addEventListener('click', e => {
+        e.preventDefault();
+        if (confirm(`Are you sure you want to delete category "${cat}"?`)) {
+          const cats = loadCategories();
+          cats.splice(idx, 1);
+          saveCategories(cats);
+          renderCategoryTable();
+          alert('Category deleted.');
+          // Trigger other pages to update category selects on reload or storage event
+        }
+      });
+      categoryTableBody.appendChild(tr);
+    });
+  }
+
+  document.getElementById('addCategoryForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const input = document.getElementById('newCategoryName');
+    const newCat = input.value.trim();
+    if (!newCat) {
+      alert('Please enter a category name.');
+      return;
+    }
+    const cats = loadCategories();
+    if (cats.includes(newCat)) {
+      alert('Category already exists.');
+      return;
+    }
+    cats.push(newCat);
+    saveCategories(cats);
+    renderCategoryTable();
+    input.value = '';
+    alert(`Category "${newCat}" added.`);
+    // Trigger a storage event for other pages (optional)
+    localStorage.setItem('rainbow_categories_updated', Date.now()); 
+  });
+
+  // Listen for category changes made in other tabs/windows
+  window.addEventListener('storage', (event) => {
+    if (event.key === 'rainbow_categories_updated') {
+      renderCategoryTable();
+    }
+  });
+
+  renderCategoryTable();
+</script>
+
+</body>
+</html>

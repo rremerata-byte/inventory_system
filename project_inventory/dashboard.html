@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Rainbow Direct Selling - Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: url('rainbow.png') no-repeat center;
+    background-size: cover;
+    background-attachment: fixed;
+  }
+  /* Rainbow Header */
+  header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
+      color: white;
+      padding: 10px 20px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+      animation: slideDown 1s ease-out;
+  }
+  @keyframes slideDown {
+    from { transform: translateY(-100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  header img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      margin-right: 10px;
+  }
+  nav a {
+      text-decoration: none;
+      color: white;
+      padding: 8px 15px;
+      border-radius: 8px;
+      font-weight: 500;
+      transition: background 0.3s;
+  }
+  nav a:hover, nav a.active {
+      background: rgba(255, 255, 255, 0.3);
+  }
+  main.dashboard {
+    max-width: 1200px;
+    margin: 30px auto 60px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 6px 25px rgba(0,0,0,0.1);
+    padding: 30px 40px;
+    text-align: center;
+    animation: fadeInUp 1.5s ease-out;
+  }
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  main.dashboard h2.description {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 30px;
+    color: #111;
+  }
+  .stats-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 40px;
+    flex-wrap: nowrap;
+    animation: fadeIn 2s ease-out;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  .stat-box {
+    flex: 1 1 0;
+    max-width: 180px;
+    background-color: #27ae60;
+    color: white;
+    border-radius: 12px;
+    padding: 24px 20px;
+    font-weight: 700;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+    user-select: none;
+    text-align: center;
+    min-width: 140px;
+    animation: bounceIn 1s ease-out forwards;
+    opacity: 0;
+  }
+  .stat-box:nth-child(1) { animation-delay: 0.2s; }
+  .stat-box:nth-child(2) { animation-delay: 0.4s; background-color: #34495e; }
+  .stat-box:nth-child(3) { animation-delay: 0.6s; background-color: #e67e22; }
+  .stat-box:nth-child(4) { animation-delay: 0.8s; background-color: #2980b9; }
+  .stat-box:nth-child(5) { animation-delay: 1s; background-color: #27ae60; }
+  @keyframes bounceIn {
+    0% { opacity: 0; transform: scale(0.3); }
+    50% { opacity: 1; transform: scale(1.05); }
+    70% { transform: scale(0.9); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+  .stat-label {
+    font-size: 1rem;
+    margin-bottom: 10px;
+  }
+  .stat-value {
+    font-size: 2rem;
+    font-weight: 900;
+    letter-spacing: 1.5px;
+  }
+  .charts-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 30px;
+    flex-wrap: nowrap;
+    animation: fadeIn 2.5s ease-out;
+  }
+  .chart-box {
+    background-color: #1e293b;
+    border-radius: 12px;
+    padding: 25px 20px;
+    width: 49%;
+    color: white;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+    user-select: none;
+    animation: slideInLeft 1.5s ease-out forwards;
+    opacity: 0;
+  }
+  .chart-box:nth-child(1) { animation-delay: 1.2s; }
+  .chart-box:nth-child(2) { animation-delay: 1.4s; animation-name: slideInRight; }
+  @keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-50px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes slideInRight {
+    from { opacity: 0; transform: translateX(50px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  .chart-box h3 {
+    font-weight: 700;
+    margin-bottom: 20px;
+  }
+  @media(max-width: 900px) {
+    .stats-row {
+      flex-wrap: wrap;
+    }
+    .stat-box {
+      max-width: 45%;
+      margin-bottom: 15px;
+    }
+    .charts-row {
+      flex-wrap: wrap;
+    }
+    .chart-box {
+      width: 90vw;
+      margin-bottom: 30px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<header>
+    <div class="logo-title">
+        <img src="rainbow.png" alt="Rainbow Logo" />
+    </div>
+    <nav>
+        <a href="#" class="active" style="color: white; text-decoration:none; padding: 8px 15px; border-radius: 8px; background: rgba(255, 59, 10, 0.6); filter: drop-shadow(0 0 6px #888); cursor: default;">Dashboard</a>
+        <a href="productlisting.html">Product Listing</a>
+        <a href="stock_add.html">Stock Add</a>
+        <a href="stock_sold.html">Stock Sold</a>
+        <a href="daily_sales_report.html">Daily Sales Report</a>
+        <a href="settings.html">Settings</a>
+    </nav>
+</header>
+
+<main class="dashboard" role="main" aria-label="Dashboard overview of sales and inventory">
+  <h2 class="description">Detailed view of sales and item movement over the last 30 days</h2>
+
+  <section class="stats-row" aria-label="Key statistics">
+    <div class="stat-box" id="currentInventoryValue">
+      <div class="stat-label">Current Inventory Value</div>
+      <div class="stat-value">₱0</div>
+    </div>
+    <div class="stat-box" id="numberOfProducts">
+      <div class="stat-label">No. of Product Types</div>
+      <div class="stat-value">0</div>
+    </div>
+    <div class="stat-box" id="averageItemPrice">
+      <div class="stat-label">Average Item Price</div>
+      <div class="stat-value">₱0.00</div>
+    </div>
+    <div class="stat-box" id="allTimeItemsSold">
+      <div class="stat-label">All Time Items Sold</div>
+      <div class="stat-value">0</div>
+    </div>
+    <div class="stat-box" id="allTimeSales">
+      <div class="stat-label">All Time Sales</div>
+      <div class="stat-value">₱0</div>
+    </div>
+  </section>
+
+  <section class="charts-row">
+    <div class="chart-box" aria-label="Inventory Status Bar Chart" role="region">
+      <h3>Inventory Status</h3>
+      <canvas id="inventoryChart" aria-label="Inventory status bar chart" role="img"></canvas>
+    </div>
+    <div class="chart-box" aria-label="Daily Items Sold Line Chart" role="region">
+      <h3>Daily Items Sold</h3>
+      <canvas id="salesChart" aria-label="Daily items sold line chart" role="img"></canvas>
+    </div>
+  </section>
+</main>
+
+<script>
+  // Load data from localStorage (fallback to sample data)
+  function loadData(key, fallback) {
+    const stored = localStorage.getItem(key);
+    if(!stored) return fallback;
+    try {
+      return JSON.parse(stored);
+    } catch {
+      return fallback;
+    }
+  }
+
+  function computeInventoryStatus(products) {
+    let inStock=0, lowStock=0, outOfStock=0;
+    products.forEach(p => {
+      const minStock = p.minStock || 10;
+      if (p.stock >= minStock) inStock++;
+      else if (p.stock >= minStock / 2) lowStock++;
+      else outOfStock++;
+    });
+    return [inStock, lowStock, outOfStock];
+  }
+
+  function computeDailySales(sales) {
+    const today = new Date();
+    const counts = Array(30).fill(0);
+    sales.forEach(s => {
+      const date = new Date(s.date);
+      const diff = Math.floor((today - date) / (1000*60*60*24));
+      if(diff >= 0 && diff < 30) counts[29 - diff] += (s.quantitySold || 0);
+    });
+    return counts;
+  }
+
+  function calculateStats(products, sales) {
+    const inventoryValue = products.reduce((sum,p) => sum + (p.stock * p.price), 0);
+    const productCount = products.length;
+    const avgPrice = productCount ? (products.reduce((sum,p) => sum + p.price,0)/productCount).toFixed(2) : 0;
+    const itemsSold = sales.reduce((sum,s) => sum + (s.quantitySold || 0), 0);
+    const allSales = sales.reduce((sum,s) => sum + ((s.quantitySold || 0) * (s.salePrice || 0)), 0);
+    return { inventoryValue, productCount, avgPrice, itemsSold, allSales };
+  }
+
+  // Function to animate number counting
+  function animateValue(element, start, end, duration) {
+    if (start === end) return;
+    const range = end - start;
+    const minTimer = 50;
+    const stepTime = Math.abs(Math.floor(duration / range));
+    const timer = stepTime < minTimer ? minTimer : stepTime;
+    const startTime = new Date().getTime();
+    const endTime = startTime + duration;
+    function run() {
+      const now = new Date().getTime();
+      const remaining = Math.max((endTime - now) / duration, 0);
+      const value = Math.round(end - (remaining * range));
+      element.innerHTML = element.innerHTML.replace(/\d+/, value);
+      if (value == end) clearInterval(timer);
+    }
+    const timer_id = setInterval(run, timer);
+    run();
+  }
+
+  // Example fallback data
+  const products = loadData('rainbow_products', [
+    { name: 'Item A', stock: 12, minStock: 10, price: 100 },
+    { name: 'Item B', stock: 4, minStock: 10, price: 200 },
+    { name: 'Item C', stock: 7, minStock: 10, price: 150 }
+  ]);
+  const sales = loadData('rainbow_sales', [
+    { date: new Date(Date.now() - 86400000*29).toISOString(), quantitySold: 5, salePrice: 100 },
+    { date: new Date(Date.now() - 86400000*10).toISOString(), quantitySold: 12, salePrice: 200 },
+    { date: new Date().toISOString(), quantitySold: 8, salePrice: 150 }
+  ]);
+
+  // Update stats UI with animations
+  const stats = calculateStats(products, sales);
+  const inventoryValueEl = document.querySelector("#currentInventoryValue .stat-value");
+  const productCountEl = document.querySelector("#numberOfProducts .stat-value");
+  const avgPriceEl = document.querySelector("#averageItemPrice .stat-value");
+  const itemsSoldEl = document.querySelector("#allTimeItemsSold .stat-value");
+  const allSalesEl = document.querySelector("#allTimeSales .stat-value");
+
+  // Set initial values to 0 for animation
+  inventoryValueEl.textContent = `₱0`;
+  productCountEl.textContent = `0`;
+  avgPriceEl.textContent = `₱0.00`;
+  itemsSoldEl.textContent = `0`;
+  allSalesEl.textContent = `₱0`;
+
+  // Animate after a delay to sync with CSS animations
+  setTimeout(() => {
+    animateValue(inventoryValueEl, 0, stats.inventoryValue, 2000);
+    animateValue(productCountEl, 0, stats.productCount, 1500);
+    animateValue(avgPriceEl, 0, parseFloat(stats.avgPrice), 1500);
+    animateValue(itemsSoldEl, 0, stats.itemsSold, 2000);
+    animateValue(allSalesEl, 0, stats.allSales, 2000);
+  }, 1000);
+
+  // Render inventory status chart with enhanced animation
+  new Chart(document.getElementById('inventoryChart'), {
+    type: 'bar',
+    data: {
+      labels: ['In Stock', 'Low Stock', 'Out of Stock'],
+      datasets: [{
+        data: computeInventoryStatus(products),
+        backgroundColor: ['#27ae60', '#f1c40f', '#e74c3c'],
+        borderRadius: 6,
+      }]
+    },
+    options: {
+      animation: {
+        delay: function(context) {
+          return context.dataIndex * 300; // Stagger animation for each bar
+        },
+        duration: 1500, // Animation duration in milliseconds
+        easing: 'easeOutBounce' // Easing function for a bouncy effect
+      },
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { beginAtZero: true, stepSize: 1, grid: {color: '#444'}, ticks: {color: '#ddd'} },
+        x: { grid: {color: '#444'}, ticks: {color: '#ddd'} }
+      }
+    }
+  });
+
+  // Render daily sales chart with animation
+  new Chart(document.getElementById('salesChart'), {
+    type: 'line',
+    data: {
+      labels: Array.from({length: 30}, (_, i) => i + 1),
+      datasets: [{
+        label: 'Items Sold',
+        data: computeDailySales(sales),
+        backgroundColor: 'rgba(0, 191, 255, 0.3)',
+        borderColor: '#00bfff',
+        fill: true,
+        tension: 0.3,
+        pointRadius: 3
+      }]
+    },
+    options: {
+      animation: {
+        duration: 2000, // Animation duration for the line
+        easing: 'easeInOutQuart' // Smooth easing for the line drawing
+      },
+      plugins: { legend: { display: false }},
+      scales: {
+        y: { beginAtZero: true, grid: {color: '#444'}, ticks: {color: '#ddd'} },
+        x: { grid: {color: '#444'}, ticks: {color: '#ddd'} }
+      }
+    }
+  });
+</script>
+
+</body>
+</html>
